@@ -52,13 +52,12 @@ void COMAI_HI::ref()
 
 COMAI_HI::COMAI_HI()
 {
-    int i;
     cchai = 0;
     hukks = 0;
     conaa = 0;
     nexaa = 0;
     maxchais = 0;
-    for (i = 0; i < 22; i++) {
+    for (int i = 0; i < 22; i++) {
         para[i] = 0;
     }
     myf_kosuu = 0;
@@ -144,6 +143,7 @@ int COMAI_HI::aite_attack_start(int ba3[6][TATE], int zenkesi_aite, int scos, in
                 kosuu_ato++;
         }
     }
+
     aite_hakka_kosuu = kosuu_mae - kosuu_ato;
     if (aite_hakka_kosuu * 2 > kosuu_mae)
         aite_hakka_honsen = 1;
@@ -1784,93 +1784,85 @@ int COMAI_HI::hon_syoukyo(int ba[][TAT_SIZE])
 
 int COMAI_HI::hon_syoukyo_score(int ba[][TAT_SIZE], int* score, int* quick)
 {
-    int rensa_rate[19] = { 0, 8, 16, 32, 64, 96, 128, 160, 192, 224, 256, 288, 320, 352, 384, 416, 448, 480, 512 };
-    int color_rate[5] = { 0, 3, 6, 12, 24 };
-    int renketsu[19][5] {};
-    int colnum;
-    int renketsunum;
-    int renketsubonus[19] = { 0 };
-    int rate;
-    int color;
-
-    int num = 0;
-    int point[6][12] {};
-    int i, j;
-    int syo = 1;
-    int kiept[6] = { 0 };
-    int rakkaflg[6];
-    int n;
-    int chain = 0;
+    int vanish_puyo_num[19][5] {};
+    int renketsu_bonus[19] {};
+    int vanish_height[6] {};
 
     (*quick) = 1;
+    int chain = 0;
+    for (bool vanished = true; vanished;) {
+        int point[6][12] {};
+        int rakkaflg[6] {};
 
-    while (syo) {
-        syo = 0;
-        memset(point, 0, sizeof(point));
-        rakkaflg[0] = 0;
-        rakkaflg[1] = 0;
-        rakkaflg[2] = 0;
-        rakkaflg[3] = 0;
-        rakkaflg[4] = 0;
-        rakkaflg[5] = 0;
-        for (i = 0; i < 6; i++) {
-            for (j = kiept[i]; j < 12; j++) {
+        vanished = false;
+        for (int i = 0; i < 6; ++i)
+          rakkaflg[i] = 0;
+
+        for (int i = 0; i < 6; i++) {
+            for (int j = vanish_height[i]; j < 12; j++) {
                 if (point[i][j] != 0)
                     continue;
-                if (ba[i][j] == 0)
+                if (ba[i][j] == TEST_PUYO_COLOR_EMPTY)
                     break;
-                if (ba[i][j] != 6) {
-                    saiki(ba, point, i, j, &num, ba[i][j]);
-                    if (num > 3) {
-                        syo = 1;
-                        color = ba[i][j];
-                        renketsu[chain][color - 1] += num;
-                        if (num > 10)
-                            renketsubonus[chain] += 10; // bugggggg 111102
-                        else if (num > 4)
-                            renketsubonus[chain] += num - 3;
-                        syou(ba, i, j, ba[i][j], rakkaflg);
-                    }
-                    num = 0;
-                }
+                if (ba[i][j] == TEST_PUYO_COLOR_OJAMA)
+                  continue;
+
+                int num = 0;
+                int color = ba[i][j];
+                saiki(ba, point, i, j, &num, color);
+                if (num < 4)
+                  continue;
+
+                vanished = true;
+                vanish_puyo_num[chain][color - 1] += num;
+                if (num > 10)
+                  renketsu_bonus[chain] += 10;
+                else if (num > 4)
+                  renketsu_bonus[chain] += num - 3;
+                syou(ba, i, j, ba[i][j], rakkaflg);
             }
         }
-        if (syo == 1)
+
+        if (vanished)
             (*quick) = 1;
-        for (i = 0; i < 6; i++) {
-            kiept[i] = 12;
-            if (rakkaflg[i] == 1) {
-                n = 0;
-                for (j = 0; j < 13; j++) {
-                    if (ba[i][j] == 0) {
-                        if (n == 0)
-                            kiept[i] = j;
-                        n++;
-                    } else if (n != 0) {
-                        ba[i][j - n] = ba[i][j];
-                        ba[i][j] = 0;
-                        (*quick) = 0;
-                    }
+        for (int i = 0; i < 6; i++) {
+            vanish_height[i] = 12;
+            if (rakkaflg[i] == 0)
+              continue;
+
+            int distance = 0;
+            for (int j = 0; j < 13; j++) {
+                if (ba[i][j] == TEST_PUYO_COLOR_EMPTY) {
+                    if (distance == 0)
+                        vanish_height[i] = j;
+                    distance++;
+                } else if (distance != 0) {
+                    ba[i][j - distance] = ba[i][j];
+                    ba[i][j] = 0;
+                    *quick = 0;
                 }
             }
         }
-        if (syo == 1)
+        if (vanished)
             chain++;
     }
 
+    static const int kRensaRate[] = { 0, 8, 16, 32, 64, 96, 128, 160, 192, 224, 256, 288, 320, 352, 384, 416, 448, 480, 512 };
+    static const int kColorRate[] = { 0, 3, 6, 12, 24 };
+
     *score = 0;
-    for (i = 0; i < chain; i++) {
-        rate = 0;
-        colnum = 0;
-        renketsunum = 0;
-        for (j = 0; j < 5; j++) {
-            colnum += (renketsu[i][j] != 0);
-            renketsunum += renketsu[i][j];
+    for (int i = 0; i < chain; i++) {
+        int bonus = 0;
+        int color_num = 0;
+        int vanish_num = 0;
+        for (int j = 0; j < 5; j++) {
+            color_num += (vanish_puyo_num[i][j] != 0);
+            vanish_num += vanish_puyo_num[i][j];
         }
-        rate = color_rate[colnum - 1] + renketsubonus[i] + rensa_rate[i];
-        if (rate == 0)
-            rate = 1;
-        *score += renketsunum * rate * 10;
+        bonus = kColorRate[color_num - 1] + renketsu_bonus[i] + kRensaRate[i];
+        if (bonus == 0)
+            bonus = 1;
+        *score += vanish_num * bonus * 10;
     }
     return chain;
 }

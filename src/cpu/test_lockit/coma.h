@@ -63,7 +63,11 @@ public:
     int chousei_syoukyo_3(int[][TAT_SIZE], int[], int*, int*, int, int, int);
     int chousei_syoukyo_sc(int[][TAT_SIZE], int[], int*);
     int hon_syoukyo(int[][TAT_SIZE]);
-    int hon_syoukyo_score(int[][TAT_SIZE], int*, int*);
+
+    // Simulate Puyo behaviors in |field| and returns the number of
+    // combo(連鎖数).  |score| figures the expected score in the chain,
+    // and |quick| is 1(true) if no puyos fall after the last vanishment.
+    int hon_syoukyo_score(int field[][TAT_SIZE], int* score, int* quick);
 
     int setti_puyo_1(int[][TAT_SIZE], int, int);
     int gtr(int[][TAT_SIZE]);

@@ -13,6 +13,10 @@
 #define TM_TANKINPT 10
 #define TM_OBJE 10
 
+// TODO: Replace following color definitions with PuyoColor.
+#define TEST_PUYO_COLOR_EMPTY 0
+#define TEST_PUYO_COLOR_OJAMA 6
+
 extern int q_t;
 extern int w_t;
 extern int e_t;

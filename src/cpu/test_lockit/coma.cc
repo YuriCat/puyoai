@@ -118,7 +118,7 @@ int COMAI_HI::aite_attack_start(int ba3[6][TATE], int zenkesi_aite, int scos, in
                 kosuu_mae++;
         }
     }
-    aite_hakka_rensa = hon_syoukyo_score(ba, &score, &quick);
+    aite_hakka_rensa = simulateChain(ba, &score, &quick);
     aite_hakka_nokori = aite_hakka_rensa;
     hakkatime = hakata;
     if (aite_hakka_rensa > 0) {
@@ -626,7 +626,7 @@ int COMAI_HI::hyouka(int ba3[6][TATE], int nex, int nex2, int nnx, int nnx2, int
                     chig_aa = 1;
                 else
                     chig_aa = 0;
-                hon_syoukyo_score(ba_a, &score, &quick);
+                simulateChain(ba_a, &score, &quick);
                 if ((ba_a[0][0] == 0) && (ba_a[1][0] == 0) && (ba_a[2][0] == 0) && (ba_a[3][0] == 0)
                     && (ba_a[4][0] == 0) && (ba_a[5][0] == 0)) {
                     for (bb = 0; bb < 22; bb++) {
@@ -644,7 +644,7 @@ int COMAI_HI::hyouka(int ba3[6][TATE], int nex, int nex2, int nnx, int nnx2, int
                             chig_bb = 1;
                         else
                             chig_bb = 0;
-                        hon_syoukyo_score(ba_ee, &score, &quick);
+                        simulateChain(ba_ee, &score, &quick);
                         if ((ba_ee[0][0] == 0) && (ba_ee[1][0] == 0) && (ba_ee[2][0] == 0) && (ba_ee[3][0] == 0)
                             && (ba_ee[4][0] == 0) && (ba_ee[5][0] == 0)) {
                             for (dd = 0; dd < 22; dd++) {
@@ -685,7 +685,7 @@ int COMAI_HI::hyouka(int ba3[6][TATE], int nex, int nex2, int nnx, int nnx2, int
         chain = 0;
         memcpy(ba, ba2, sizeof(ba));
         setti_puyo(ba, aa, nx1, nx2, setti_basyo);
-        chain = hon_syoukyo_score(ba, &score, &quick);
+        chain = simulateChain(ba, &score, &quick);
 
         // つぶし
         if ((e_t) && (aite_hakka_rensa < 4)) {
@@ -1782,7 +1782,7 @@ int COMAI_HI::hon_syoukyo(int ba[][TAT_SIZE])
     return chain;
 }
 
-int COMAI_HI::hon_syoukyo_score(int ba[][TAT_SIZE], int* score, int* quick)
+int COMAI_HI::simulateChain(int ba[][TAT_SIZE], int* score, int* quick)
 {
     int vanish_puyo_num[19][5] {};
     int renketsu_bonus[19] {};
@@ -2742,7 +2742,7 @@ int COMAI_HI::pre_hyouka(int ba3[6][TATE], int nex, int nex2, int nnx, int nnx2,
                     chig_aa = 1;
                 else
                     chig_aa = 0;
-                hon_syoukyo_score(ba_a, &score, &quick);
+                simulateChain(ba_a, &score, &quick);
                 if ((ba_a[0][0] == 0) && (ba_a[1][0] == 0) && (ba_a[2][0] == 0) && (ba_a[3][0] == 0)
                     && (ba_a[4][0] == 0) && (ba_a[5][0] == 0)) {
                     for (bb = 0; bb < 22; bb++) {
@@ -2760,7 +2760,7 @@ int COMAI_HI::pre_hyouka(int ba3[6][TATE], int nex, int nex2, int nnx, int nnx2,
                             chig_bb = 1;
                         else
                             chig_bb = 0;
-                        hon_syoukyo_score(ba_ee, &score, &quick);
+                        simulateChain(ba_ee, &score, &quick);
                         if ((ba_ee[0][0] == 0) && (ba_ee[1][0] == 0) && (ba_ee[2][0] == 0) && (ba_ee[3][0] == 0)
                             && (ba_ee[4][0] == 0) && (ba_ee[5][0] == 0)) {
                             for (dd = 0; dd < 22; dd++) {
@@ -2803,7 +2803,7 @@ int COMAI_HI::pre_hyouka(int ba3[6][TATE], int nex, int nex2, int nnx, int nnx2,
         memcpy(ba, ba2, sizeof(ba));
 
         setti_puyo(ba, aa, nx1, nx2, setti_basyo);
-        chain = hon_syoukyo_score(ba, &score, &quick);
+        chain = simulateChain(ba, &score, &quick);
 
         // つぶし
         if ((e_t) && (aite_hakka_rensa < 4)) {

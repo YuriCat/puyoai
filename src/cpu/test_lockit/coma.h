@@ -67,7 +67,7 @@ public:
     // Simulate Puyo behaviors in |field| and returns the number of
     // combo(連鎖数).  |score| figures the expected score in the chain,
     // and |quick| is 1(true) if no puyos fall after the last vanishment.
-    int hon_syoukyo_score(int field[][TAT_SIZE], int* score, int* quick);
+    int simulateChain(int field[][TAT_SIZE], int* score, int* quick);
 
     int setti_puyo_1(int[][TAT_SIZE], int, int);
     int gtr(int[][TAT_SIZE]);

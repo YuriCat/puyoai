@@ -154,12 +154,7 @@ FrameResponse TestLockitAI::playOneFrame(const FrameRequest& request)
             r_player[1].set_puyo_once = 1;
             r_player[1].fall();
             r_player[1].keep_score = r_player[1].score;
-            //			coma.aite_attack_start(r_player[1].field, r_player[1].zenkesi,
-            //r_player[1].score);
-            //			coma.aite_attack_start(r_player[1].field, r_player[1].zenkesi,
-            //coma.aite_hakkaji_score, r_player[0].id);
-            if (coma.aite_attack_start(r_player[1].field, r_player[1].zenkesi, coma.aite_hakkaji_score,
-                                       r_player[0].id)) { //スコア取得バグ
+            if (coma.isEnemyStartRensa(r_player[1].field, r_player[1].zenkesi, coma.aite_hakkaji_score, r_player[0].id)) {
                 r_player[1].zenkesi = 0;
             }
         }

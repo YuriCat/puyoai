@@ -77,7 +77,7 @@ public:
                    int zenkesi_aite, int fast);
     int hyouka(int ba3[6][TATE], int nex, int nex2, int nnx, int nnx2, int zenkesi_own, int aite_ba[6][TATE],
                int zenkesi_aite);
-    int aite_attack_start(int ba3[6][TATE], int zenkesi_aite, int scos, int hakata);
+    bool isEnemyStartRensa(int ba3[6][TATE], int zenkesi_aite, int scos, int hakata);
     int aite_attack_nokori(int ba3[6][TATE], int hakata);
     int aite_rensa_end();
     void ref();
@@ -96,7 +96,7 @@ public:
     int aite_hakka_rensa;
     int aite_hakka_nokori;
     int aite_hakka_zenkesi;
-    int aite_hakka_kosuu;
+    int aite_hakka_kosuu;  // 相手が連鎖で使うぷよの個数
     int nocc_aite_rensa_score;
     int max_ee;
     int key_ee;

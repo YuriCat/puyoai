@@ -12,6 +12,27 @@
 int chainhyk[22][22][221][EE_SIZE], poihyo[22][22][221][EE_SIZE];
 int score_hukasa[22][22][221] {};
 
+// NOTE: There should be alternative and useful methods for these methods
+// in this anonymous namespace
+namespace {
+void copyField(int src_field[6][TATE], int dst_field[6][TAT_SIZE]) {
+    for (int i = 0; i < 6; i++)
+        for (int j = 0; j < 13; j++)
+            dst_field[i][j] = src_field[i][j];
+}
+
+int countColoredPuyos(int field[6][TAT_SIZE]) {
+    int num = 0;
+    for (int i = 0; i < 6; i++) {
+        for (int j = 0; j < 13; j++) {
+            if (field[i][j] != TEST_PUYO_COLOR_EMPTY && field[i][j] != TEST_PUYO_COLOR_OJAMA)
+                ++num;
+        }
+    }
+    return num;
+}
+}
+
 void COMAI_HI::ref()
 {
     cchai = 0;
@@ -102,31 +123,24 @@ COMAI_HI::~COMAI_HI()
 {
 }
 
-int COMAI_HI::aite_attack_start(int ba3[6][TATE], int zenkesi_aite, int scos, int hakata)
+bool COMAI_HI::isEnemyStartRensa(int ba3[6][TATE], int zenkesi_aite, int scos, int hakata)
 {
     int ba[6][TAT_SIZE] {};
-    int i, j;
-    int kosuu_mae = 0, kosuu_ato = 0;
+    copyField(ba3, ba);
+    int kosuu_mae = countColoredPuyos(ba);
+
     int score = 0;
-    int jamako_sabun;
     int quick = 0;
-    int ret_keshi = 0;
-    for (i = 0; i < 6; i++) {
-        for (j = 0; j < 13; j++) {
-            ba[i][j] = ba3[i][j];
-            if ((ba3[i][j] != 0) && (ba3[i][j] < 6))
-                kosuu_mae++;
-        }
-    }
     aite_hakka_rensa = simulateChain(ba, &score, &quick);
     aite_hakka_nokori = aite_hakka_rensa;
     hakkatime = hakata;
+
+    int kosuu_ato = countColoredPuyos(ba);
+
     if (aite_hakka_rensa > 0) {
-        ret_keshi = 1;
         aite_hakka_zenkesi = zenkesi_aite;
-        jamako_sabun = aite_hakkaji_score / 70;
         aite_hakkaji_score = scos + score;
-        aite_hakka_jamako = aite_hakkaji_score / 70 - jamako_sabun;
+        aite_hakka_jamako = aite_hakkaji_score / 70 - aite_hakkaji_score / 70;
         aite_hakka_quick = quick;
         if (kougeki_on || kougeki_edge)
             aite_hakka_jamako -= kougeki_iryoku;
@@ -135,19 +149,12 @@ int COMAI_HI::aite_attack_start(int ba3[6][TATE], int zenkesi_aite, int scos, in
         kougeki_on = 0;
         kougeki_iryoku = 0;
     }
+
     kougeki_edge = 0;
-
-    for (i = 0; i < 6; i++) {
-        for (j = 0; j < 13; j++) {
-            if ((ba[i][j] != 0) && (ba[i][j] < 6))
-                kosuu_ato++;
-        }
-    }
-
     aite_hakka_kosuu = kosuu_mae - kosuu_ato;
     if (aite_hakka_kosuu * 2 > kosuu_mae)
         aite_hakka_honsen = 1;
-    return ret_keshi;
+    return aite_hakka_rensa > 0;
 }
 
 int COMAI_HI::aite_attack_nokori(int [6][TATE], int hakata)

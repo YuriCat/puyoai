@@ -72,7 +72,7 @@ public:
     int setti_puyo_1(int[][TAT_SIZE], int, int);
     int gtr(int[][TAT_SIZE]);
 
-    int aite_hyouka(int ba3[6][TATE], int nex, int nex2, int nnx, int nnx2);
+    int aite_hyouka(int ba3[][TATE], int nex, int nex2, int nnx, int nnx2);
     int pre_hyouka(int ba3[6][TATE], int nex, int nex2, int nnx, int nnx2, int zenkesi_own, int aite_ba[6][TATE],
                    int zenkesi_aite, int fast);
     int hyouka(int ba3[6][TATE], int nex, int nex2, int nnx, int nnx2, int zenkesi_own, int aite_ba[6][TATE],

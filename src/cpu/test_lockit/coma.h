@@ -78,8 +78,8 @@ public:
     int hyouka(int ba3[6][TATE], int nex, int nex2, int nnx, int nnx2, int zenkesi_own, int aite_ba[6][TATE],
                int zenkesi_aite);
     bool isEnemyStartRensa(int ba3[6][TATE], int zenkesi_aite, int scos, int hakata);
-    int aite_attack_nokori(int ba3[6][TATE], int hakata);
-    int aite_rensa_end();
+    void aite_attack_nokori(int ba3[6][TATE], int hakata);
+    void aite_rensa_end();
     void ref();
 
     int read_template();

@@ -1,3 +1,5 @@
+#include "coma.h"
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -7,7 +9,7 @@
 #include <sstream>
 #include <string>
 
-#include "coma.h"
+#include "core/field_constant.h"
 
 int chainhyk[22][22][221][EE_SIZE], poihyo[22][22][221][EE_SIZE];
 int score_hukasa[22][22][221] {};
@@ -15,22 +17,43 @@ int score_hukasa[22][22][221] {};
 // NOTE: There should be alternative and useful methods for these methods
 // in this anonymous namespace
 namespace {
-void copyField(int src_field[6][TATE], int dst_field[6][TAT_SIZE]) {
-    for (int i = 0; i < 6; i++)
-        for (int j = 0; j < 13; j++)
+void copyField(int src_field[][TATE], int dst_field[][TAT_SIZE]) {
+    for (int i = 0; i < FieldConstant::WIDTH; i++)
+        for (int j = 0; j < FieldConstant::HEIGHT + 1; j++)
             dst_field[i][j] = src_field[i][j];
 }
 
-int countColoredPuyos(int field[6][TAT_SIZE]) {
-    int num = 0;
-    for (int i = 0; i < 6; i++) {
-        for (int j = 0; j < 13; j++) {
-            if (field[i][j] != TEST_PUYO_COLOR_EMPTY && field[i][j] != TEST_PUYO_COLOR_OJAMA)
-                ++num;
-        }
-    }
-    return num;
+template <size_t VSize, typename F>
+int countCell(const int field[][VSize], F f) {
+    int count = 0;
+    for (int i = 0; i < FieldConstant::WIDTH; ++i)
+        for (int j = 0; j < FieldConstant::HEIGHT + 1; j++)
+            if (f(field[i][j]))
+                ++count;
+  return count;
 }
+
+template <size_t VSize>
+int countColoredPuyos(const int field[][VSize]) {
+  return countCell(field, [](int cell) {
+      return cell != TEST_PUYO_COLOR_EMPTY && cell != TEST_PUYO_COLOR_OJAMA;
+    });
+}
+
+template <size_t VSize>
+int countOjamaPuyos(const int field[][VSize]) {
+  return countCell(field, [](int cell) {
+      return cell == TEST_PUYO_COLOR_OJAMA;
+    });
+}
+
+template <size_t VSize>
+int countPuyos(const int field[][VSize]) {
+  return countCell(field, [](int cell) {
+      return cell != TEST_PUYO_COLOR_EMPTY;
+    });
+}
+
 }
 
 void COMAI_HI::ref()
@@ -157,13 +180,12 @@ bool COMAI_HI::isEnemyStartRensa(int ba3[6][TATE], int zenkesi_aite, int scos, i
     return aite_hakka_rensa > 0;
 }
 
-int COMAI_HI::aite_attack_nokori(int [6][TATE], int hakata)
+void COMAI_HI::aite_attack_nokori(int [6][TATE], int hakata)
 {
     aite_hakka_nokori = aite_hakka_rensa - (hakata - hakkatime + 30) / 40;
-    return 0;
 }
 
-int COMAI_HI::aite_rensa_end()
+void COMAI_HI::aite_rensa_end()
 {
     aite_hakka_rensa = 0;
     aite_hakka_zenkesi = 0;
@@ -174,7 +196,6 @@ int COMAI_HI::aite_rensa_end()
     aite_hakka_quick = 0;
     aite_hakka_jamako = 0;
     aite_hakka_nokori = 0;
-    return 0;
 }
 
 int COMAI_HI::aite_hyouka(int ba3[6][TATE], int nex, int nex2, int nnx, int nnx2)
@@ -221,13 +242,8 @@ int COMAI_HI::aite_hyouka(int ba3[6][TATE], int nex, int nex2, int nnx, int nnx2
     nx2 = nex2;
     nn1 = nnx;
     nn2 = nnx2;
-    for (i = 0; i < 6; i++) {
-        for (j = 0; j < 13; j++) {
-            ba2[i][j] = ba3[i][j];
-            if ((ba3[i][j] > 0) && (ba3[i][j] < 6))
-                irokosuu++;
-        }
-    }
+    copyField(ba3, ba2);
+    irokosuu = countColoredPuyos(ba3);
 
     for (aa = 0; aa < 22; aa++) {
         if (tobashi_hantei_a(ba2, aa, nx1, nx2))

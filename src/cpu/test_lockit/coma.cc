@@ -180,7 +180,7 @@ bool COMAI_HI::isEnemyStartRensa(int ba3[6][TATE], int zenkesi_aite, int scos, i
     return aite_hakka_rensa > 0;
 }
 
-void COMAI_HI::aite_attack_nokori(int [6][TATE], int hakata)
+void COMAI_HI::aite_attack_nokori(int hakata)
 {
     aite_hakka_nokori = aite_hakka_rensa - (hakata - hakkatime + 30) / 40;
 }

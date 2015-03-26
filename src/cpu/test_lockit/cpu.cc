@@ -229,8 +229,7 @@ FrameResponse TestLockitAI::playOneFrame(const FrameRequest& request)
                                 r_player[0].tsumo[3], r_player[0].zenkesi, r_player[1].field, r_player[1].zenkesi,
                                 1);
             }
-            coma.aite_attack_nokori(r_player[1].field,
-                                    r_player[0].id); //情報が更新されないため、現構成ではうまく機能しない
+            coma.aite_attack_nokori(r_player[0].id);
             coma.hyouka(r_player[0].field, r_player[0].tsumo[0], r_player[0].tsumo[1], r_player[0].tsumo[2],
                         r_player[0].tsumo[3], r_player[0].zenkesi, r_player[1].field, r_player[1].zenkesi);
 

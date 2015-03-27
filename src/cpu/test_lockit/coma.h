@@ -53,8 +53,6 @@ public:
     int syou_down_num(int[][TAT_SIZE], int, int, int, int[], int*);
     int syou_2(int[][TAT_SIZE], int, int, int);
 
-    int setti_ojama(int[][TAT_SIZE], int);
-
     int tobashi_hantei_a(int[][TAT_SIZE], int, int, int);
     int setti_puyo(int[][TAT_SIZE], int, int, int, int[]);
     int tobashi_hantei_b(int[][TAT_SIZE], int);

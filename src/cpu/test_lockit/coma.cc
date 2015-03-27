@@ -134,6 +134,5 @@ void COMAI_HI::aite_attack_nokori(int hakata)
 #include "chousei_syoukyo_3.cc"
 #include "chousei_syoukyo_sc.cc"
 #include "gtr.cc"
-#include "setti_ojama.cc"
 #include "read_template.cc"
 #include "pre_hyouka.cc"

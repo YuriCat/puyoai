@@ -9,6 +9,7 @@
 #include <sstream>
 #include <string>
 
+#include "base/base.h"
 #include "core/field_constant.h"
 
 int chainhyk[22][22][221][EE_SIZE], poihyo[22][22][221][EE_SIZE];
@@ -52,6 +53,34 @@ int countPuyos(const int field[][VSize]) {
   return countCell(field, [](int cell) {
       return cell != TEST_PUYO_COLOR_EMPTY;
     });
+}
+
+inline int idToX(int id) {
+  if (id < 6)
+    return id + 1;
+  if (id < 11)
+    return id - 5;
+  if (id < 17)
+    return id - 10;
+  if (id < 22)
+    return id - 16;
+
+  // ASSERT_NOT_REACHED();
+  return -1;
+}
+
+inline int idToR(int id) {
+  if (id < 6)
+    return 0;
+  if (id < 11)
+    return 2;
+  if (id < 17)
+    return 3;
+  if (id < 22)
+    return 1;
+
+  // ASSERT_NOT_REACHED();
+  return -1;
 }
 
 }

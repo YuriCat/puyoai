@@ -257,7 +257,6 @@ FrameResponse TestLockitAI::playOneFrame(const FrameRequest& request)
                 r_player[0].te_x = tmp - 15;
                 r_player[0].te_r = 3;
             }
-            //			r_player[0].setti_puyo();
             if (r_player[0].setti_puyo()) {
                 r_player[0].zenkesi = 0;
             }

@@ -154,7 +154,7 @@ void COMAI_HI::aite_attack_nokori(int hakata)
 #include "saiki_3.cc"
 #include "tobashi_hantei_a.cc"
 #include "tobashi_hantei_b.cc"
-#include "setti_puyo.cc"
+#include "put_puyos.cc"  // done
 #include "hon_syoukyo.cc"
 #include "simulate_chain.cc"  // done
 #include "setti_puyo_1.cc"

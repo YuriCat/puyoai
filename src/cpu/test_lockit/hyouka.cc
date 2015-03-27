@@ -114,7 +114,7 @@ int COMAI_HI::hyouka(int ba3[6][TATE], int nex, int nex2, int nnx, int nnx2, int
             if (tobashi_hantei_a(ba2, aa, nx1, nx2))
                 continue;
             memcpy(ba_a, ba2, sizeof(ba));
-            setti_puyo(ba_a, aa, nx1, nx2, setti_basyo);
+            putPuyos(ba_a, aa, nx1, nx2, setti_basyo);
             if ((setti_basyo[0] != setti_basyo[2]) && (setti_basyo[1] != setti_basyo[3]))
                 chig_aa = 1;
             else
@@ -136,7 +136,7 @@ int COMAI_HI::hyouka(int ba3[6][TATE], int nex, int nex2, int nnx, int nnx2, int
                 if (tobashi_hantei_a(ba_a, bb, nn1, nn2))
                     continue;
                 memcpy(ba_ee, ba_a, sizeof(ba));
-                setti_puyo(ba_ee, bb, nn1, nn2, setti_basyo);
+                putPuyos(ba_ee, bb, nn1, nn2, setti_basyo);
                 if ((setti_basyo[0] != setti_basyo[2]) && (setti_basyo[1] != setti_basyo[3]))
                     chig_bb = 1;
                 else
@@ -216,7 +216,7 @@ int COMAI_HI::hyouka(int ba3[6][TATE], int nex, int nex2, int nnx, int nnx2, int
         if (myf_kosuu < 15) {
             for (aa = 0; aa < 22; aa++) {
                 memcpy(ba_a, ba2, sizeof(ba_a));
-                setti_puyo(ba_a, aa, nx1, nx2, setti_basyo);
+                putPuyos(ba_a, aa, nx1, nx2, setti_basyo);
                 if ((setti_basyo[0] != setti_basyo[2]) && (setti_basyo[1] != setti_basyo[3]))
                     chig_aa = 1;
                 else
@@ -234,7 +234,7 @@ int COMAI_HI::hyouka(int ba3[6][TATE], int nex, int nex2, int nnx, int nnx2, int
                 if (myf_kosuu < 13) {
                     for (bb = 0; bb < 22; bb++) {
                         memcpy(ba_ee, ba_a, sizeof(ba_ee));
-                        setti_puyo(ba_ee, bb, nn1, nn2, setti_basyo);
+                        putPuyos(ba_ee, bb, nn1, nn2, setti_basyo);
                         if ((setti_basyo[0] != setti_basyo[2]) && (setti_basyo[1] != setti_basyo[3]))
                             chig_bb = 1;
                         else
@@ -279,7 +279,7 @@ int COMAI_HI::hyouka(int ba3[6][TATE], int nex, int nex2, int nnx, int nnx2, int
 
         chain = 0;
         memcpy(ba, ba2, sizeof(ba));
-        setti_puyo(ba, aa, nx1, nx2, setti_basyo);
+        putPuyos(ba, aa, nx1, nx2, setti_basyo);
         chain = simulateChain(ba, &score, &quick);
 
         // つぶし
@@ -386,7 +386,7 @@ int COMAI_HI::hyouka(int ba3[6][TATE], int nex, int nex2, int nnx, int nnx2, int
                 if (tobashi_hantei_a(ba2, aa, nx1, nx2))
                     continue;
                 memcpy(ba_a, ba2, sizeof(ba));
-                setti_puyo(ba_a, aa, nx1, nx2, setti_basyo);
+                putPuyos(ba_a, aa, nx1, nx2, setti_basyo);
                 if (chousei_syoukyo(ba_a, setti_basyo) != 0)
                     continue;
                 for (cplace = 0; cplace < 6; cplace++) {
@@ -453,7 +453,7 @@ int COMAI_HI::hyouka(int ba3[6][TATE], int nex, int nex2, int nnx, int nnx2, int
         if (tobashi_hantei_a(ba2, aa, nx1, nx2))
             continue;
         memcpy(ba_a, ba2, sizeof(ba));
-        setti_puyo(ba_a, aa, nx1, nx2, setti_basyo);
+        putPuyos(ba_a, aa, nx1, nx2, setti_basyo);
         if ((setti_basyo[0] != setti_basyo[2]) && (setti_basyo[1] != setti_basyo[3]))
             chig_aa = 1;
         else
@@ -491,7 +491,7 @@ int COMAI_HI::hyouka(int ba3[6][TATE], int nex, int nex2, int nnx, int nnx2, int
             if (tobashi_hantei_a(ba_a, bb, nn1, nn2))
                 continue;
             memcpy(ba_ee, ba_a, sizeof(ba));
-            setti_puyo(ba_ee, bb, nn1, nn2, setti_basyo);
+            putPuyos(ba_ee, bb, nn1, nn2, setti_basyo);
             if ((setti_basyo[0] != setti_basyo[2]) && (setti_basyo[1] != setti_basyo[3]))
                 chig_bb = 1;
             else

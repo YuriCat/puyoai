@@ -45,7 +45,7 @@ int COMAI_HI::chousei_syoukyo_sc(int ba[][TAT_SIZE], int setti_basyo[], int* sco
             renketsubonus[chain] += 10; // bugggggg 111102
         else if (numa > 4)
             renketsubonus[chain] += numa - 3;
-        syou(ba, a, b, ba[a][b], rakkaflg);
+        vanish(ba, a, b, ba[a][b], rakkaflg);
         keshiko += numa;
     }
     if (numb > 3) {
@@ -55,7 +55,7 @@ int COMAI_HI::chousei_syoukyo_sc(int ba[][TAT_SIZE], int setti_basyo[], int* sco
             renketsubonus[chain] += 10; // bugggggg 111102
         else if (numb > 4)
             renketsubonus[chain] += numb - 3;
-        syou(ba, c, d, ba[c][d], rakkaflg);
+        vanish(ba, c, d, ba[c][d], rakkaflg);
         keshiko += numb;
     }
 
@@ -100,7 +100,7 @@ int COMAI_HI::chousei_syoukyo_sc(int ba[][TAT_SIZE], int setti_basyo[], int* sco
                             renketsubonus[chain] += 10; // bugggggg 111102
                         else if (num > 4)
                             renketsubonus[chain] += num - 3;
-                        syou(ba, i, j, ba[i][j], rakkaflg);
+                        vanish(ba, i, j, ba[i][j], rakkaflg);
                         keshiko += num;
                     }
                     num = 0;

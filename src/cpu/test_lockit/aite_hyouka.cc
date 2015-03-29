@@ -194,7 +194,7 @@ int COMAI_HI::aite_hyouka(int ba3[][TATE], int nex, int nex2, int nnx, int nnx2)
                         for (j = kiept[i]; j < 12; j++) {
                             if (point[i][j] > 3) {
                                 syo = 1;
-                                syou(ba, i, j, ba[i][j], rakkaflg);
+                                vanish(ba, i, j, ba[i][j], rakkaflg);
                             }
                         }
                     }

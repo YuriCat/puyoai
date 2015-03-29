@@ -27,11 +27,11 @@ int COMAI_HI::chousei_syoukyo(int ba[][TAT_SIZE], int setti_basyo[])
     if ((numa < 4) && (numb < 4))
         return 0;
     if (numa > 3) {
-        syou(ba, a, b, ba[a][b], rakkaflg);
+        vanish(ba, a, b, ba[a][b], rakkaflg);
         keshiko += numa;
     }
     if (numb > 3) {
-        syou(ba, c, d, ba[c][d], rakkaflg);
+        vanish(ba, c, d, ba[c][d], rakkaflg);
         keshiko += numb;
     }
 
@@ -71,7 +71,7 @@ int COMAI_HI::chousei_syoukyo(int ba[][TAT_SIZE], int setti_basyo[])
                     saiki(ba, point, i, j, &num, ba[i][j]);
                     if (num > 3) {
                         syo = 1;
-                        syou(ba, i, j, ba[i][j], rakkaflg);
+                        vanish(ba, i, j, ba[i][j], rakkaflg);
                         keshiko += num;
                     }
                     num = 0;

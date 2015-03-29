@@ -35,7 +35,7 @@ int COMAI_HI::simulateChain(int ba[][TAT_SIZE], int* score, int* quick)
                   renketsu_bonus[chain] += 10;
                 else if (num > 4)
                   renketsu_bonus[chain] += num - 3;
-                syou(ba, i, j, ba[i][j], rakkaflg);
+                vanish(ba, i, j, ba[i][j], rakkaflg);
             }
         }
 

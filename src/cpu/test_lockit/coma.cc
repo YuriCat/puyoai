@@ -6,6 +6,7 @@
 #include <time.h>
 
 #include <iostream>
+#include <queue>
 #include <sstream>
 #include <string>
 
@@ -149,6 +150,7 @@ void COMAI_HI::aite_attack_nokori(int hakata)
 #include "ref.cc"
 #include "hyouka.cc"
 #include "syou.cc"
+#include "vanish.cc"  // done
 #include "saiki.cc"
 #include "saiki_2.cc"
 #include "saiki_3.cc"

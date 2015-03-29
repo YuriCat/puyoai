@@ -41,11 +41,7 @@ public:
 
     int saiki_4(int[][TAT_SIZE], int, int, int*, int);
 
-    int syou(int[][TAT_SIZE], int, int, int, int[]);
-    int syou_right(int[][TAT_SIZE], int, int, int, int[]);
-    int syou_left(int[][TAT_SIZE], int, int, int, int[]);
-    int syou_up(int[][TAT_SIZE], int, int, int, int[]);
-    int syou_down(int[][TAT_SIZE], int, int, int, int[]);
+    static void vanish(int[][TAT_SIZE], int, int, int, int[]);
     int syou_downx(int[][TAT_SIZE], int, int, int, int[], int*);
     int syou_right_num(int[][TAT_SIZE], int, int, int, int[], int*);
     int syou_left_num(int[][TAT_SIZE], int, int, int, int[], int*);

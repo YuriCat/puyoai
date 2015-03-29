@@ -92,7 +92,7 @@ int COMAI_HI::chousei_syoukyo_3(int bass[][TAT_SIZE], int[], int* poi2s, int* sc
                         else if (num > 4)
                             renketsubonus[chain] += num - 3;
                         (*poi2s) = (*poi2s) - num * num;
-                        syou(bass, i, j, bass[i][j], rakkaflg);
+                        vanish(bass, i, j, bass[i][j], rakkaflg);
                     }
                     num = 0;
                 }

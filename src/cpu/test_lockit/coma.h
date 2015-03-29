@@ -60,7 +60,6 @@ public:
     int chousei_syoukyo_2(int[][TAT_SIZE], int[], int*, int[], int*, int*);
     int chousei_syoukyo_3(int[][TAT_SIZE], int[], int*, int*, int, int, int);
     int chousei_syoukyo_sc(int[][TAT_SIZE], int[], int*);
-    int hon_syoukyo(int[][TAT_SIZE]);
 
     // Simulate Puyo behaviors in |field| and returns the number of
     // combo(連鎖数).  |score| figures the expected score in the chain,

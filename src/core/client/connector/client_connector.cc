@@ -2,7 +2,6 @@
 
 #include <glog/logging.h>
 
-#include <iostream>
 #include <string>
 
 #include "core/frame_request.h"
@@ -10,30 +9,52 @@
 
 using namespace std;
 
+namespace {
+const int kBufferSize = 1024;
+} // namespace anonymous
+
+ClientConnector::~ClientConnector()
+{
+}
+
 bool ClientConnector::receive(FrameRequest* frameRequest)
 {
     if (closed_)
         return false;
 
-    std::string line;
-    while (true) {
-        if (!std::getline(std::cin, line)) {
-            closed_ = true;
-            return false;
-        }
-
-        if (line != "")
-            break;
+    FrameRequestHeader header;
+    if (!readExactly(reinterpret_cast<char*>(&header), sizeof(header))) {
+        LOG(ERROR) << "unexpected eof when reading header";
+        return false;
     }
 
-    LOG(INFO) << "RECEIVED: " << line;
-    *frameRequest = FrameRequest::parse(line);
+    if (header.size > kBufferSize) {
+        LOG(ERROR) << "size too large: size=" << header.size;
+        return false;
+    }
+
+    char payload[kBufferSize + 1];
+    if (!readExactly(payload, header.size)) {
+        LOG(ERROR) << "unepxected eof when reading payload";
+        return false;
+    }
+
+    payload[header.size] = '\0';
+
+    LOG(INFO) << "RECEIVED: " << payload;
+    *frameRequest = FrameRequest::parsePayload(payload, header.size);
     return true;
 }
 
 void ClientConnector::send(const FrameResponse& resp)
 {
     string s = resp.toString();
-    cout << s << endl;
+
+    // Send size as header.
+    uint32_t size = s.size();
+    writeExactly(&size, sizeof(size));
+    writeExactly(s.data(), s.size());
+    flush();
+
     LOG(INFO) << "SEND: " << s;
 }

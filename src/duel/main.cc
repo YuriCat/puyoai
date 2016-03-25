@@ -6,17 +6,22 @@
 #include <vector>
 
 #include <signal.h>
+#if OS_POSIX
 #include <libgen.h>
+#endif
 #include <gflags/gflags.h>
 #include <glog/logging.h>
 
-#include "base/file.h"
+#include "base/file/path.h"
 #include "core/httpd/http_handler.h"
+#include "core/server/connector/connector_manager.h"
 #include "core/server/connector/human_connector.h"
-#include "core/server/connector/connector_manager_posix.h"
 #include "core/server/game_state.h"
 #include "core/server/game_state_observer.h"
 #include "duel/cui.h"
+#if OS_WIN
+#include "duel/cui_win.h"
+#endif
 #include "duel/duel_server.h"
 #include "duel/puyofu_recorder.h"
 
@@ -47,7 +52,7 @@ DEFINE_string(record, "", "use Puyofu Recorder. 'transition' for transition log,
 DEFINE_bool(ignore_sigpipe, false, "true to ignore SIGPIPE");
 #ifdef USE_HTTPD
 DEFINE_bool(httpd, false, "use httpd");
-DEFINE_int32(port, 8000, "httpd port");
+DEFINE_int32(httpd_port, 8000, "httpd port");
 DECLARE_string(data_dir);
 #endif
 
@@ -87,6 +92,7 @@ private:
     unique_ptr<GameState> gameState_;
 };
 
+#if !defined(_MSC_VER)
 static void ignoreSIGPIPE()
 {
     struct sigaction act;
@@ -97,15 +103,20 @@ static void ignoreSIGPIPE()
 
     CHECK(sigaction(SIGPIPE, &act, 0) == 0);
 }
+#endif
 
 int main(int argc, char* argv[])
 {
     google::InitGoogleLogging(argv[0]);
     google::ParseCommandLineFlags(&argc, &argv, true);
+#if !defined(_MSC_VER)
     google::InstallFailureSignalHandler();
+#endif
 
+#if !defined(_MSC_VER)
     if (FLAGS_ignore_sigpipe)
         ignoreSIGPIPE();
+#endif
 
     if (argc != 3) {
         LOG(ERROR) << "There must be 2 arguments." << endl;
@@ -119,17 +130,16 @@ int main(int argc, char* argv[])
     }
 #endif
 
-    ConnectorManagerPosix manager {
-        Connector::create(0, string(argv[1])),
-        Connector::create(1, string(argv[2])),
-    };
+    ConnectorManager manager(true);
+    manager.setConnector(0, ServerConnector::create(0, string(argv[1])));
+    manager.setConnector(1, ServerConnector::create(1, string(argv[2])));
 
 #ifdef USE_HTTPD
     unique_ptr<GameStateHandler> gameStateHandler;
     unique_ptr<HttpServer> httpServer;
     if (FLAGS_httpd) {
         gameStateHandler.reset(new GameStateHandler);
-        httpServer.reset(new HttpServer(FLAGS_port));
+        httpServer.reset(new HttpServer(FLAGS_httpd_port));
         httpServer->installHandler("/data", [&](const HttpRequest& req, HttpResponse* res){
             gameStateHandler->handle(req, res);
         });
@@ -139,7 +149,11 @@ int main(int argc, char* argv[])
 
     unique_ptr<Cui> cui;
     if (FLAGS_use_cui) {
+#if OS_WIN
+        cui.reset(new CuiWin);
+#else
         cui.reset(new Cui);
+#endif
         cui->clear();
     }
 
@@ -185,7 +199,7 @@ int main(int argc, char* argv[])
         mainWindow->addDrawer(userEventDrawer.get());
 
         for (int i = 0; i < 2; ++i) {
-            Connector* c = manager.connector(i);
+            ServerConnector* c = manager.connector(i);
             if (c->isHuman()) {
                 HumanConnector* hc = static_cast<HumanConnector*>(c);
                 unique_ptr<MainWindow::EventListener> listener(new HumanConnectorKeyListener(hc));

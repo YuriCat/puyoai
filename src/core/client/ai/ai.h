@@ -1,6 +1,7 @@
 #ifndef CORE_CLIENT_AI_H_
 #define CORE_CLIENT_AI_H_
 
+#include <memory>
 #include <string>
 
 #include "core/client/ai/drop_decision.h"
@@ -128,7 +129,7 @@ private:
     KumipuyoSeq rememberedSequence(int indexFrom, const KumipuyoSeq& provided) const;
 
     std::string name_;
-    ClientConnector connector_;
+    std::unique_ptr<ClientConnector> connector_;
 
     bool desynced_;
 

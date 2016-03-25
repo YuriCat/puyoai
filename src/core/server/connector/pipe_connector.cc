@@ -1,65 +1,100 @@
 #include "core/server/connector/pipe_connector.h"
 
-#include <glog/logging.h>
-
-#include <cstddef>
 #include <cstring>
+#include <string>
+
+#include <gflags/gflags.h>
+#include <glog/logging.h>
 
 #include "core/frame_request.h"
 #include "core/frame_response.h"
 
+#if defined(_MSC_VER)
+#include "core/server/connector/pipe_connector_win.h"
+#else
+#include "core/server/connector/pipe_connector_posix.h"
+#endif
+
 using namespace std;
 
-PipeConnector::PipeConnector(int writerFd, int readerFd) :
-    writerFd_(writerFd),
-    readerFd_(readerFd)
-{
-    writer_ = fdopen(writerFd_, "w");
-    reader_ = fdopen(readerFd_, "r");
+namespace {
 
-    CHECK(writer_);
-    CHECK(reader_);
+const int TIMEOUT_USEC = 1000000 / FPS;
+
 }
 
-PipeConnector::~PipeConnector()
+DEFINE_bool(no_timeout, false, "if true, wait ai's thought without timeout");
+
+// static
+unique_ptr<ServerConnector> PipeConnector::create(int playerId, const string& programName)
 {
-    fclose(writer_);
-    fclose(reader_);
+#if defined(_MSC_VER)
+    return PipeConnectorWin::create(playerId, programName);
+#else
+    return PipeConnectorPosix::create(playerId, programName);
+#endif
+}
+
+// static
+int PipeConnector::getUsecFromStart(const TimePoint& start)
+{
+    return chrono::duration_cast<chrono::microseconds>(Clock::now() - start).count();
+}
+
+// static
+int PipeConnector::getRemainingMilliSeconds(const TimePoint& start)
+{
+    if (FLAGS_no_timeout)
+        return numeric_limits<int>::max();
+
+    int usec = getUsecFromStart(start);
+    return (TIMEOUT_USEC - usec + 999) / 1000;
+}
+
+PipeConnector::PipeConnector(int player) :
+    ServerConnector(player),
+    closed_(false)
+{
 }
 
 void PipeConnector::send(const FrameRequest& req)
 {
-    writeString(req.toString());
-}
+    std::string s = req.toString();
 
-void PipeConnector::writeString(const string& message)
-{
-    fprintf(writer_, "%s\n", message.c_str());
-    fflush(writer_);
-    LOG(INFO) << message;
+    // Send header first.
+    FrameRequestHeader header(s.size());
+    if (!writeData(reinterpret_cast<const void*>(&header), sizeof(header))) {
+        LOG(ERROR) << "failed to write message header";
+        return;
+    }
+
+    if (!writeData(reinterpret_cast<const void*>(s.data()), s.size())) {
+        LOG(ERROR) << "failed to write message payload";
+        return;
+    }
 }
 
 bool PipeConnector::receive(FrameResponse* response)
 {
-    char buf[1000];
-    char* ptr = fgets(buf, 999, reader_);
-    if (!ptr)
+    // Receives header.
+    FrameResponseHeader header;
+    if (!readData(reinterpret_cast<void*>(&header), sizeof(header))) {
+        LOG(ERROR) << "failed to read message header";
         return false;
-
-    size_t len = strlen(ptr);
-    if (len == 0)
-        return false;
-
-    if (ptr[len-1] == '\n') {
-        ptr[--len] = '\0';
-    }
-    if (len == 0)
-        return false;
-    if (ptr[len-1] == '\r') {
-        ptr[--len] = '\0';
     }
 
-    LOG(INFO) << buf;
-    *response = FrameResponse::parse(buf);
+    if (header.size > kBufferSize) {
+        LOG(ERROR) << "body is too large to read: size=" << header.size;
+        return false;
+    }
+
+    char payload[kBufferSize];
+    if (!readData(reinterpret_cast<void*>(payload), header.size)) {
+        LOG(ERROR) << "failed to read payload";
+        return false;
+    }
+
+    *response = FrameResponse::parsePayload(payload, header.size);
+    LOG(INFO) << "RECEIVED: " << response->toString();
     return true;
 }

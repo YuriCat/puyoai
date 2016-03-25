@@ -4,33 +4,28 @@
 #include <mutex>
 #include <string>
 
-#include "core/server/connector/connector.h"
+#include "core/server/connector/server_connector.h"
 #include "core/key_set.h"
 
 struct FrameRequest;
 struct FrameResponse;
 
-class HumanConnector : public Connector {
+class HumanConnector : public ServerConnector {
 public:
-    virtual ~HumanConnector() {}
+    explicit HumanConnector(int player) : ServerConnector(player) {}
+    virtual ~HumanConnector() override {}
 
     virtual void send(const FrameRequest&) override;
     virtual bool receive(FrameResponse*) override;
 
-    virtual bool isHuman() const override { return true; }
-    // HumanConnector is always alive.
-    virtual bool isClosed() const override { return false; }
-    virtual void setClosed(bool flag) override;
-    virtual bool pollable() const override { return false; }
-    virtual int readerFd() const override;
+    virtual bool isHuman() const final { return true; }
+    virtual bool isClosed() const final { return false; }
 
     void setKeySet(const KeySet&);
 
 private:
-    void writeString(const std::string&);
-
     std::mutex mu_;
     KeySet currentKeySet_;
 };
 
-#endif
+#endif // CORE_SERVER_CONNECTOR_HUMAN_CONNECTOR_H_

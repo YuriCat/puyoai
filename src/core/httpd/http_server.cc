@@ -9,7 +9,8 @@
 #include <glog/logging.h>
 
 #include "base/base.h"
-#include "base/file.h"
+#include "base/file/file.h"
+#include "base/file/path.h"
 #include "base/strings.h"
 
 using namespace std;

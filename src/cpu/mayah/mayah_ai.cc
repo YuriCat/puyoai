@@ -5,6 +5,7 @@
 #include <sstream>
 
 #include <gflags/gflags.h>
+#include <glog/logging.h>
 
 #include "base/time.h"
 #include "base/wait_group.h"
@@ -41,7 +42,7 @@ MayahAI::MayahAI(int argc, char* argv[], Executor* executor) :
 
     VLOG(1) << evaluationParameterMap_.toString();
 
-    google::FlushLogFiles(google::INFO);
+    google::FlushLogFiles(google::GLOG_INFO);
 }
 
 MayahAI::~MayahAI()

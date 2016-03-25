@@ -13,8 +13,8 @@
 #include "core/player.h"
 #include "core/puyo_color.h"
 #include "core/puyo_controller.h"
-#include "core/server/connector/connector.h"
-#include "core/server/connector/connector_manager_posix.h"
+#include "core/server/connector/connector_manager.h"
+#include "core/server/connector/server_connector.h"
 #include "core/server/game_state.h"
 #include "core/server/game_state_observer.h"
 #include "gui/screen.h"
@@ -34,11 +34,9 @@ WiiConnectServer::WiiConnectServer(Source* source, Analyzer* analyzer,
     isAi_[0] = (p1Program != "-");
     isAi_[1] = (p2Program != "-");
 
-    connector_.reset(new ConnectorManagerPosix {
-        Connector::create(0, p1Program),
-        Connector::create(1, p2Program),
-    });
-    connector_->setWaitTimeout(false);
+    connector_.reset(new ConnectorManager(false));
+    connector_->setConnector(0, ServerConnector::create(0, p1Program));
+    connector_->setConnector(1, ServerConnector::create(1, p2Program));
 }
 
 WiiConnectServer::~WiiConnectServer()
@@ -97,7 +95,13 @@ void WiiConnectServer::runLoop()
         if (!surface.get()) {
             ++noSurfaceCount;
             LOG(INFO) << "No surface?: count=" << noSurfaceCount << endl;
-            cout << "No surface? count=" << noSurfaceCount << endl;
+            cout << "No surface? count=" << noSurfaceCount
+                 << " done=" << source_->done() << endl;
+
+            if (source_->done()) {
+                break;
+            }
+
             // TODO(mayah): Why not sleep?
             if (noSurfaceCount > 100000) {
                 shouldStop_ = true;

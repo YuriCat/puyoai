@@ -12,16 +12,6 @@ namespace test_lockit {
 
 namespace {
 
-void saiki_right(const PuyoColor[][kHeight], int[][12], int, int, int*, PuyoColor);
-void saiki_left(const PuyoColor[][kHeight], int[][12], int, int, int*, PuyoColor);
-void saiki_up(const PuyoColor[][kHeight], int[][12], int, int, int*, PuyoColor);
-void saiki_down(const PuyoColor[][kHeight], int[][12], int, int, int*, PuyoColor);
-
-void saiki_3_right(const PuyoColor[][kHeight], int[][12], int, int, int*, PuyoColor);
-void saiki_3_left(const PuyoColor[][kHeight], int[][12], int, int, int*, PuyoColor);
-void saiki_3_up(const PuyoColor[][kHeight], int[][12], int, int, int*, PuyoColor);
-void saiki_3_down(const PuyoColor[][kHeight], int[][12], int, int, int*, PuyoColor);
-
 void syou_right(PuyoColor[][kHeight], int, int, PuyoColor, int[]);
 void syou_left(PuyoColor[][kHeight], int, int, PuyoColor, int[]);
 void syou_up(PuyoColor[][kHeight], int, int, PuyoColor, int[]);
@@ -32,120 +22,24 @@ void syou_left_num(PuyoColor[][kHeight], int, int, PuyoColor, int[], int*);
 void syou_up_num(PuyoColor[][kHeight], int, int, PuyoColor, int[], int*);
 void syou_down_num(PuyoColor[][kHeight], int, int, PuyoColor, int[], int*);
 
-void saiki_right(const PuyoColor ba[][kHeight], int point[][12], int x, int y, int* num, PuyoColor incol)
-{
-    point[x][y] = 1;
-    *num += 1;
-    if ((y != 11) && (incol == ba[x][y + 1]) && (point[x][y + 1] == 0))
-        saiki_up(ba, point, x, y + 1, num, incol);
-    if ((x != 5) && (incol == ba[x + 1][y]) && (point[x + 1][y] == 0))
-        saiki_right(ba, point, x + 1, y, num, incol);
-    if ((y != 0) && (incol == ba[x][y - 1]) && (point[x][y - 1] == 0))
-        saiki_down(ba, point, x, y - 1, num, incol);
-}
-
-void saiki_left(const PuyoColor ba[][kHeight], int point[][12], int x, int y, int* num, PuyoColor incol)
-{
-    point[x][y] = 1;
-    *num += 1;
-    if ((x != 0) && (incol == ba[x - 1][y]) && (point[x - 1][y] == 0))
-        saiki_left(ba, point, x - 1, y, num, incol);
-    if ((y != 11) && (incol == ba[x][y + 1]) && (point[x][y + 1] == 0))
-        saiki_up(ba, point, x, y + 1, num, incol);
-    if ((y != 0) && (incol == ba[x][y - 1]) && (point[x][y - 1] == 0))
-        saiki_down(ba, point, x, y - 1, num, incol);
-}
-
-void saiki_up(const PuyoColor ba[][kHeight], int point[][12], int x, int y, int* num, PuyoColor incol)
-{
-    point[x][y] = 1;
-    *num += 1;
-    if ((x != 0) && (incol == ba[x - 1][y]) && (point[x - 1][y] == 0))
-        saiki_left(ba, point, x - 1, y, num, incol);
-    if ((y != 11) && (incol == ba[x][y + 1]) && (point[x][y + 1] == 0))
-        saiki_up(ba, point, x, y + 1, num, incol);
-    if ((x != 5) && (incol == ba[x + 1][y]) && (point[x + 1][y] == 0))
-        saiki_right(ba, point, x + 1, y, num, incol);
-}
-
-void saiki_down(const PuyoColor ba[][kHeight], int point[][12], int x, int y, int* num, PuyoColor incol)
-{
-    point[x][y] = 1;
-    *num += 1;
-    if ((x != 0) && (incol == ba[x - 1][y]) && (point[x - 1][y] == 0))
-        saiki_left(ba, point, x - 1, y, num, incol);
-    if ((x != 5) && (incol == ba[x + 1][y]) && (point[x + 1][y] == 0))
-        saiki_right(ba, point, x + 1, y, num, incol);
-    if ((y != 0) && (incol == ba[x][y - 1]) && (point[x][y - 1] == 0))
-        saiki_down(ba, point, x, y - 1, num, incol);
-}
-
-void saiki_3_right(const PuyoColor ba[][kHeight], int point[][12], int x, int y, int* num, PuyoColor incol)
-{
-    point[x][y] = 1;
-    *num += 1;
-    if ((y != 11) && (incol == ba[x][y + 1]) && (point[x][y + 1] != 1))
-        saiki_3_up(ba, point, x, y + 1, num, incol);
-    if ((x != 5) && (incol == ba[x + 1][y]) && (point[x + 1][y] != 1))
-        saiki_3_right(ba, point, x + 1, y, num, incol);
-    if ((y != 0) && (incol == ba[x][y - 1]) && (point[x][y - 1] != 1))
-        saiki_3_down(ba, point, x, y - 1, num, incol);
-}
-
-void saiki_3_left(const PuyoColor ba[][kHeight], int point[][12], int x, int y, int* num, PuyoColor incol)
-{
-    point[x][y] = 1;
-    *num += 1;
-    if ((x != 0) && (incol == ba[x - 1][y]) && (point[x - 1][y] != 1))
-        saiki_3_left(ba, point, x - 1, y, num, incol);
-    if ((y != 11) && (incol == ba[x][y + 1]) && (point[x][y + 1] != 1))
-        saiki_3_up(ba, point, x, y + 1, num, incol);
-    if ((y != 0) && (incol == ba[x][y - 1]) && (point[x][y - 1] != 1))
-        saiki_3_down(ba, point, x, y - 1, num, incol);
-}
-
-void saiki_3_up(const PuyoColor ba[][kHeight], int point[][12], int x, int y, int* num, PuyoColor incol)
-{
-    point[x][y] = 1;
-    *num += 1;
-    if ((x != 0) && (incol == ba[x - 1][y]) && (point[x - 1][y] != 1))
-        saiki_3_left(ba, point, x - 1, y, num, incol);
-    if ((y != 11) && (incol == ba[x][y + 1]) && (point[x][y + 1] != 1))
-        saiki_3_up(ba, point, x, y + 1, num, incol);
-    if ((x != 5) && (incol == ba[x + 1][y]) && (point[x + 1][y] != 1))
-        saiki_3_right(ba, point, x + 1, y, num, incol);
-}
-
-void saiki_3_down(const PuyoColor ba[][kHeight], int point[][12], int x, int y, int* num, PuyoColor incol)
-{
-    point[x][y] = 1;
-    *num += 1;
-    if ((x != 0) && (incol == ba[x - 1][y]) && (point[x - 1][y] != 1))
-        saiki_3_left(ba, point, x - 1, y, num, incol);
-    if ((x != 5) && (incol == ba[x + 1][y]) && (point[x + 1][y] != 1))
-        saiki_3_right(ba, point, x + 1, y, num, incol);
-    if ((y != 0) && (incol == ba[x][y - 1]) && (point[x][y - 1] != 1))
-        saiki_3_down(ba, point, x, y - 1, num, incol);
-}
-
 void syou_right(PuyoColor ba[][kHeight], int x, int y, PuyoColor incol, int flg[])
 {
-    ba[x][y] = PuyoColor::EMPTY;
-    flg[x] = 1;
-    if ((y != 11) && (ba[x][y + 1] == incol))
-        syou_up(ba, x, y + 1, incol, flg);
-    if ((y != 11) && (ba[x][y + 1] == PuyoColor::OJAMA))
-        ba[x][y + 1] = PuyoColor::EMPTY;
-    if ((x != 5) && (ba[x + 1][y] == incol))
-        syou_right(ba, x + 1, y, incol, flg);
-    if ((x != 5) && (ba[x + 1][y] == PuyoColor::OJAMA)) {
-        ba[x + 1][y] = PuyoColor::EMPTY;
-        flg[x + 1] = 1;
-    }
-    if ((y != 0) && (ba[x][y - 1] == incol))
-        syou_down(ba, x, y - 1, incol, flg);
-    if ((y != 0) && (ba[x][y - 1] == PuyoColor::OJAMA))
-        ba[x][y - 1] = PuyoColor::EMPTY;
+  ba[x][y] = PuyoColor::EMPTY;
+  flg[x] = 1;
+  if ((y != 11) && (ba[x][y + 1] == incol))
+    syou_up(ba, x, y + 1, incol, flg);
+  if ((y != 11) && (ba[x][y + 1] == PuyoColor::OJAMA))
+    ba[x][y + 1] = PuyoColor::EMPTY;
+  if ((x != 5) && (ba[x + 1][y] == incol))
+    syou_right(ba, x + 1, y, incol, flg);
+  if ((x != 5) && (ba[x + 1][y] == PuyoColor::OJAMA)) {
+    ba[x + 1][y] = PuyoColor::EMPTY;
+    flg[x + 1] = 1;
+  }
+  if ((y != 0) && (ba[x][y - 1] == incol))
+    syou_down(ba, x, y - 1, incol, flg);
+  if ((y != 0) && (ba[x][y - 1] == PuyoColor::OJAMA))
+    ba[x][y - 1] = PuyoColor::EMPTY;
 }
 
 void syou_left(PuyoColor ba[][kHeight], int x, int y, PuyoColor incol, int flg[])
@@ -343,7 +237,7 @@ TLRensaResult simulate(PuyoColor field[][kHeight])
     bool cont = true;
     while (cont) {
         cont = false;
-        int point[6][12] {};
+        Check point[6][12] {};
         int rakkaflg[6] {};
 
         SmallIntSet used_colors;
@@ -353,7 +247,7 @@ TLRensaResult simulate(PuyoColor field[][kHeight])
                 PuyoColor color = field[i][j];
                 if (color == PuyoColor::EMPTY)
                     continue;
-                if (point[i][j] != 1 && isNormalColor(color)) {
+                if (point[i][j] != Check::Checked && isNormalColor(color)) {
                     int num = 0;
                     saiki(field, point, i, j, &num, color);
                     if (num >= 4) {
@@ -416,35 +310,18 @@ TLRensaResult simulate(PuyoColor field[][kHeight])
     return result;
 }
 
-void saiki(const PuyoColor ba[][kHeight], int point[][12], int x, int y, int* num, PuyoColor incol)
+void saiki(const PuyoColor ba[][kHeight], Check point[][12], int x, int y, int* num, PuyoColor incol)
 {
-    DCHECK(isNormalColor(incol))
-            << "saiki(x=" << x << ",y=" << y << ",incol=" << incol << ")";
-
-    point[x][y] = 1;
+    point[x][y] = Check::Checked;
     *num += 1;
-    if ((x != 0) && (incol == ba[x - 1][y]) && (point[x - 1][y] == 0))
-        saiki_left(ba, point, x - 1, y, num, incol);
-    if ((y != 11) && (incol == ba[x][y + 1]) && (point[x][y + 1] == 0))
-        saiki_up(ba, point, x, y + 1, num, incol);
-    if ((x != 5) && (incol == ba[x + 1][y]) && (point[x + 1][y] == 0))
-        saiki_right(ba, point, x + 1, y, num, incol);
-    if ((y != 0) && (incol == ba[x][y - 1]) && (point[x][y - 1] == 0))
-        saiki_down(ba, point, x, y - 1, num, incol);
-}
-
-void saiki_3(const PuyoColor ba[][kHeight], int point[][12], int x, int y, int* num, PuyoColor incol)
-{
-    point[x][y] = 1;
-    *num += 1;
-    if ((x != 0) && (incol == ba[x - 1][y]) && (point[x - 1][y] != 1))
-        saiki_3_left(ba, point, x - 1, y, num, incol);
-    if ((y != 11) && (incol == ba[x][y + 1]) && (point[x][y + 1] != 1))
-        saiki_3_up(ba, point, x, y + 1, num, incol);
-    if ((x != 5) && (incol == ba[x + 1][y]) && (point[x + 1][y] != 1))
-        saiki_3_right(ba, point, x + 1, y, num, incol);
-    if ((y != 0) && (incol == ba[x][y - 1]) && (point[x][y - 1] != 1))
-        saiki_3_down(ba, point, x, y - 1, num, incol);
+    if ((x != 0) && (incol == ba[x - 1][y]) && (point[x - 1][y] != Check::Checked))
+        saiki(ba, point, x - 1, y, num, incol);
+    if ((y != 11) && (incol == ba[x][y + 1]) && (point[x][y + 1] != Check::Checked))
+        saiki(ba, point, x, y + 1, num, incol);
+    if ((x != 5) && (incol == ba[x + 1][y]) && (point[x + 1][y] != Check::Checked))
+        saiki(ba, point, x + 1, y, num, incol);
+    if ((y != 0) && (incol == ba[x][y - 1]) && (point[x][y - 1] != Check::Checked))
+        saiki(ba, point, x, y - 1, num, incol);
 }
 
 void saiki_4(PuyoColor ba[][kHeight], int x, int y, int* num, PuyoColor incol)
@@ -632,7 +509,7 @@ int setti_puyo_1(PuyoColor ba[][kHeight], int eex, PuyoColor eecol)
     return 0;
 }
 
-int chousei_syoukyo_3(PuyoColor bass[][kHeight], int[], int* poi2s, int* score, int tokus, int i2, int j2, int ruiseki_point)
+int chousei_syoukyo_3(PuyoColor bass[][kHeight], int[], int* poi2s, int* score, Check tokus, int i2, int j2, int ruiseki_point)
 {
     int rensa_rate[19] = { 0, 8, 16, 32, 64, 96, 128, 160, 192, 224, 256, 288, 320, 352, 384, 416, 448, 480, 512 };
     int color_rate[5] = { 0, 3, 6, 12, 24 };
@@ -643,7 +520,7 @@ int chousei_syoukyo_3(PuyoColor bass[][kHeight], int[], int* poi2s, int* score, 
     int rate;
 
     int num = 0;
-    int point[6][12] {};
+    Check point[6][12] {};
     int i, j;
     int syo = 1;
     int kiept[6] = { 0 };
@@ -659,12 +536,24 @@ int chousei_syoukyo_3(PuyoColor bass[][kHeight], int[], int* poi2s, int* score, 
     rakkaflg[4] = 0;
     rakkaflg[5] = 0;
     PuyoColor color = bass[i2][j2];
-    if (tokus < 5) {
+    switch (tokus) {
+    case Check::Unchecked:
+    case Check::Checked:
+    case Check::ColorWithEmptyUR:
+    case Check::ColorWithEmptyUL:
+    case Check::ColorWithEmptyU:
         syou_downx(bass, i2, j2 + 1, bass[i2][j2], rakkaflg, &num);
-    } else if (tokus < 7) {
+        break;
+    case Check::ColorWithEmptyLR:
+    case Check::ColorWithEmptyL:
         syou_downx(bass, i2 + 1, j2, bass[i2][j2], rakkaflg, &num);
-    } else if (tokus == 7) {
+        break;
+    case Check::ColorWithEmptyR:
         syou_downx(bass, i2 - 1, j2, bass[i2][j2], rakkaflg, &num);
+        break;
+    case Check::Unknown:
+    case Check::Empty:
+        ; // do nothing
     }
     renketsu[0][ordinal(color)] = num;
     if (num > 10)
@@ -700,7 +589,7 @@ int chousei_syoukyo_3(PuyoColor bass[][kHeight], int[], int* poi2s, int* score, 
 
     while (syo) {
         syo = 0;
-        memset(point, 0, sizeof(point));
+        std::fill_n(&point[0][0], 6 * 12, Check::Unchecked);
         rakkaflg[0] = 0;
         rakkaflg[1] = 0;
         rakkaflg[2] = 0;
@@ -709,7 +598,7 @@ int chousei_syoukyo_3(PuyoColor bass[][kHeight], int[], int* poi2s, int* score, 
         rakkaflg[5] = 0;
         for (i = 0; i < 6; i++) {
             for (j = kiept[i]; j < 12; j++) {
-                if (point[i][j] != 0)
+                if (point[i][j] != Check::Unchecked)
                     continue;
                 if (bass[i][j] == PuyoColor::EMPTY)
                     break;

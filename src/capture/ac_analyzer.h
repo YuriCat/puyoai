@@ -3,8 +3,8 @@
 
 #include "base/base.h"
 #include "capture/analyzer.h"
+#include "capture/recognition/recognizer.h"
 #include "gui/bounding_box.h"  // TODO(mayah): Consider removing this
-#include "recognition/recognizer.h"
 
 struct Box;
 struct HSV;
@@ -33,10 +33,11 @@ public:
     // Draw each pixel of |surface| with RealColor. This is helpful for image analyzing test.
     void drawWithAnalysisResult(SDL_Surface*);
 
+    CaptureGameState detectGameState(const SDL_Surface*) override;
+
     static RealColor estimateRealColor(const HSV&);
 
 private:
-    CaptureGameState detectGameState(const SDL_Surface*) override;
     std::unique_ptr<DetectedField> detectField(int pi,
                                                const SDL_Surface* current,
                                                const SDL_Surface* prev2,

@@ -3,7 +3,7 @@
 #include <gflags/gflags.h>
 #include <glog/logging.h>
 
-#include "base/file.h"
+#include "base/file/path.h"
 #include "base/wait_group.h"
 #include "core/httpd/http_server.h"
 #include "core/pattern/pattern_book.h"
@@ -29,7 +29,9 @@ int main(int argc, char* argv[])
 {
     google::ParseCommandLineFlags(&argc, &argv, true);
     google::InitGoogleLogging(argv[0]);
+#if !defined(_MSC_VER)
     google::InstallFailureSignalHandler();
+#endif
 
     PatternBook patternBook;
     CHECK(patternBook.load(FLAGS_pattern_book));

@@ -2,9 +2,6 @@ cmake_minimum_required(VERSION 2.8)
 
 cpu_setup("hamaji")
 
-puyoai_add_cxx_flags("-W -Wall -Wno-deprecated-declarations")
-puyoai_add_cxx_flags("-Wno-error=unused-variable -Wno-error=sign-compare")
-
 add_library(hamaji_lib
             core.cc db.cc eval_base.cc eval.cc eval2.cc
             field.cc game.cc
@@ -26,7 +23,9 @@ endfunction()
 
 hamaji_add_executable(lps main.cc)
 hamaji_add_executable(study study.cc)
-hamaji_add_executable(mkdb mkdb.cc)
+if(NOT MSVC)
+  hamaji_add_executable(mkdb mkdb.cc)
+endif()
 hamaji_add_executable(matchstat matchstat.cc)
 hamaji_add_executable(one one.cc)
 hamaji_add_executable(tokopuyo tokopuyo_main.cc)

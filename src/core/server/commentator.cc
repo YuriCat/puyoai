@@ -6,12 +6,13 @@
 #include <math.h>
 #include <stdarg.h>
 #include <stdlib.h>
-#include <time.h>
 
 #include <algorithm>
+#include <chrono>
 #include <map>
 #include <memory>
 #include <set>
+#include <thread>
 #include <vector>
 
 #include <glog/logging.h>
@@ -114,12 +115,7 @@ void Commentator::stop()
 void Commentator::runLoop()
 {
     while (!shouldStop_) {
-        struct timespec req { 0, 16 * 1000 * 1000 };
-        struct timespec rem;
-        while (nanosleep(&req, &rem) < 0) {
-            PCHECK(errno == EINTR);
-            req = rem;
-        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(16));
 
         bool updated = false;
         for (int pi = 0; pi < 2; ++pi) {

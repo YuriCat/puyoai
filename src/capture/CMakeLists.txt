@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 
 add_subdirectory(driver)
+add_subdirectory(recognition)
 
 add_library(puyoai_capture
             ac_analyzer.cc
@@ -16,7 +17,7 @@ add_library(puyoai_capture
             usb_device.cc)
 
 if(V4L2_LIBRARY)
-    puyoai_add_cxx_flags("-DUSE_V4L2")
+    add_compile_options("-DUSE_V4L2")
     add_library(puyoai_capture_viddev viddev_source.cc)
 endif()
 
@@ -56,6 +57,7 @@ endfunction()
 
 capture_add_executable(convert_image_60fps)
 capture_add_executable(convert_movie_60fps)
+capture_add_executable(gather_images_by_match)
 capture_add_executable(split_image)
 capture_add_executable(split_movie)
 

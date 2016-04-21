@@ -13,7 +13,6 @@
 #include <glog/logging.h>
 
 #include "base/file/path.h"
-#include "core/httpd/http_handler.h"
 #include "core/server/connector/connector_manager.h"
 #include "core/server/connector/human_connector.h"
 #include "core/server/game_state.h"
@@ -26,7 +25,8 @@
 #include "duel/puyofu_recorder.h"
 
 #ifdef USE_HTTPD
-#include "core/httpd/http_server.h"
+#include "net/httpd/http_handler.h"
+#include "net/httpd/http_server.h"
 #endif
 
 #ifdef USE_SDL2
@@ -73,6 +73,7 @@ public:
     GameStateHandler() {}
     virtual ~GameStateHandler() {}
 
+#if USE_HTTPD
     void handle(const HttpRequest& req, HttpResponse* resp) {
         UNUSED_VARIABLE(req);
 
@@ -81,6 +82,7 @@ public:
             return;
         resp->setContent(gameState_->toJson());
     }
+#endif
 
     virtual void onUpdate(const GameState& gameState) override {
         lock_guard<mutex> lock(mu_);

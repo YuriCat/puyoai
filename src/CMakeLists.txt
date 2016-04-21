@@ -158,6 +158,8 @@ add_subdirectory(core)
 add_subdirectory(cpu)
 add_subdirectory(duel)
 add_subdirectory(experimental)
+add_subdirectory(learning)
+add_subdirectory(net)
 add_subdirectory(solver)
 
 if(EXISTS ${CMAKE_SOURCE_DIR}/internal AND IS_DIRECTORY ${CMAKE_SOURCE_DIR}/internal)
@@ -193,6 +195,8 @@ endif()
 
 if(USE_HTTPD)
     puyoai_message("HTTPD is enabled")
+else()
+    puyoai_message("HTTPD is NOT enabled")
 endif()
 
 if(BUILD_CAPTURE)

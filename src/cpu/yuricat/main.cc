@@ -58,10 +58,14 @@ int64_t timeManage(const PlayerState& me, const PlayerState& enemy, bool fast){
     
     int highest_y = -1;
     for(int x = 1; x <= FieldConstant::WIDTH; ++x){
-        highest_y = max(highest_y, me.field.height(x) - abs(x - 3));
+        int y = me.field.height(x) - abs(x - 3);
+        if(x == 3){
+            y += 2;
+        }
+        highest_y = max(highest_y, y);
     }
     
-    return fast ? 30 : min(30 + 560 * sqrt(1 - me.field.countPuyos() / 78.0), 30 + sqrt(max(0.0001, (13.0 - highest_y) / 13)) * 560);
+    return fast ? 30 : min(300 + 300 * pow(1 - me.field.countPuyos() / 78.0, 0.6), 300 + pow(max(0.0001, (12.0 - highest_y) / 12), 0.6) * 300);
 }
 
 Decision searchEscapeMove(const CoreField& f, const KumipuyoSeq& seq){
@@ -108,6 +112,9 @@ public:
                        const PlayerState& me, const PlayerState& enemy, bool fast) const override{
         // 思考
         LOG(INFO) << f.toDebugString() << seq.toString();
+        
+        ClockMS clock;
+        clock.start();
         
         cerr << "turn " << turn[0] << endl;
         if(g_requestFrame[0].size() <= (unsigned int)turn[0]){
@@ -199,8 +206,16 @@ public:
         
         CERR << f;
         
-        g_limitTime = ClockMS::now() + timeManage(me, enemy, fast);
+        int64_t limit = timeManage(me, enemy, fast);
+        g_limitTime = ClockMS::now() + limit - 10;
         cerr << g_limitTime << endl;
+        
+        bool evaluationMode = fast ? true : false;
+        /*if(limit < 40){
+            evaluationMode = true;
+        }else{
+            evaluationMode = false;
+        }*/
         
         // 定石
         // 3連鎖以下の全消しがあれば即打ち
@@ -274,7 +289,7 @@ public:
                 if(frame < rensa_finish_frame){
                     int s = evaluatePlan(f, plan);
                     
-                    if (s > score) {
+                    if(s > score){
                         score = s;
                         best = plan.decision(0);
                         CERR << plan.decision(0).toString() << ", " << plan.decision(1).toString() << endl;
@@ -283,6 +298,9 @@ public:
             });
             
             cerr << "best move = " << best.toString() << " plan score = " << score << endl;
+            ASSERT(best.x != 0,);
+            return DropDecision(best, "Fast " + std::to_string(clock.stop()) + " BestMove = " + best.toString() + "\n");
+            
         }else{
             //ASSERT(sequence.get(turn[0]) == seq.get(0), cerr << sequence.toString() << " " << seq.toString() << " " << turn[0] << endl;);
             //sleep(0.3);
@@ -315,7 +333,10 @@ public:
         if(best == Decision()){
             return DropDecision(searchEscapeMove(f, seq), "Give Up");
         }
-        return DropDecision(best, bestMessage);
+        ASSERT(best.x != 0,);
+        std::ostringstream oss;
+        oss << "TL = " << limit << " Real = " << clock.stop() << " " << bestMessage << " Best = " << best.toString() << endl;
+        return DropDecision(best, oss.str());
     }
         
     void gaze(int frameId, const CoreField& enemyField, const KumipuyoSeq& seq) override{
@@ -476,7 +497,7 @@ public:
     int win[2], draw; // 勝敗
     int games;
     //int rensa_finish_frame[2]; // 連鎖終了フレーム
-    bool evaluationMode = false; // 評価関数1手読みモード
+    //bool evaluationMode = false; // 評価関数1手読みモード
     int num_threads = 3;
     //bool endless_mode = false; // 諸事情によりendless modeか知る必要がある
 };

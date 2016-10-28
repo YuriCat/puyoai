@@ -250,7 +250,8 @@ namespace Yuricat{
         //const int kBeamWidth = 200;
         
         //auto beamWidthFunc = [](int depth)->int{ return 50 + 250 * pow(0.965, depth - 1); }; // ビーム幅を減衰
-        auto beamWidthFunc = [](int depth)->int{ return 80 + min(150.0, 50 * log((depth + 1) * 0.7)); }; // ビーム幅を増幅
+        //auto beamWidthFunc = [](int depth)->int{ return 80 + min(150.0, 50 * log((depth + 1) * 0.7)); }; // ビーム幅を増幅
+        auto beamWidthFunc = [](int depth)->int{ return 300 + depth; }; // 一定
         
         vector<node_t> stateQueue[N_MAX_SOLO_SEARCH_TURNS + 1];
         vector<fired_result_t> firedResult[N_MAX_SOLO_SEARCH_TURNS + 1];
@@ -269,11 +270,14 @@ namespace Yuricat{
         
         const int search_turns = min(100000000, org_turn + max(10, min(50, ((6 * 13) - org_field.countPuyos()) / 2 + 4))); // 探索ターン数の上限を設定
         
-        int max_chain = 0;
-        int best_score = 0;
+        int max_chain = -1;
+        int best_score = -1;
         Decision first_decision;
         
         for(int turn = org_turn; turn < search_turns; ++turn){
+            
+            if(ClockMS::now() >= g_limitTime){ break; }
+            
             int t = turn - org_turn;
             unordered_set<int64_t> visited; // 合流検知
             stateQueue[t + 1].reserve(stateQueue[t].size() * 22);

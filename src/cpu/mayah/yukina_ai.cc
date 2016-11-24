@@ -36,11 +36,11 @@ DropDecision YukinaAI::think(int frame_id, const CoreField& field, const Kumipuy
             if (plan.chains() <= 1 && plan.score() - enemy_score >= scoreForOjama(12)) {
                 update = true;
             }
-            if (plan.chains() <= 2 && plan.score() - enemy_score >= scoreForOjama(6) && plan.score() >= scoreForOjama(12)) {
+            if (plan.chains() <= 2 && plan.score() - enemy_score >= scoreForOjama(18) && plan.score() >= scoreForOjama(18)) {
                 update = true;
             }
 #if 1
-            if (plan.chains() <= 3 && plan.score() - enemy_score >= scoreForOjama(6) && plan.score() >= scoreForOjama(21)) {
+            if (plan.chains() <= 3 && plan.score() - enemy_score >= scoreForOjama(18) && plan.score() >= scoreForOjama(21)) {
                 update = true;
             }
 #endif
@@ -121,7 +121,12 @@ DropDecision YukinaAI::thinkByThinker(int frame_id, const CoreField& field, cons
     const bool usesDecisionBook = true;
     const bool usesRensaHandTree = !fast;
 
-    if (enemy.isRensaOngoing()) {
+    if (fast) {
+        return pattern_thinker_->think(frame_id, field, kumipuyo_seq, me, enemy, gazer_.gazeResult(), fast,
+                                       usesDecisionBook, usesRensaHandTree);
+    }
+
+    if (enemy.isRensaOngoing() || me.totalOjama(enemy) > 2) {
 #if 0
         if (enemy.rensaFinishingFrameId() - frame_id > 60 * 4 && field.countPuyos() < 64) {
             return beam_thinker_->think(frame_id, field, kumipuyo_seq, me, enemy, fast);

@@ -55,7 +55,7 @@ Evaluator::Genre Evaluator::EvalField(const PlayerState& me, const PlayerState& 
 
   if (true) {
     std::string name;
-    int value = DynamicPatternBook::iteratePatterns(me.field, &name);
+    int value = Pattern::getDynamicPattern()->iteratePatterns(me.field, &name);
     if (value > 0) {
       oss << "Pattern(" << name << ")_";
       score += value;
@@ -183,10 +183,12 @@ int Evaluator::EvalEnemyPlan() {
 }
 
 int Evaluator::Valley(const CoreField& field) {
-  int score = 0;
+  constexpr int kEdgePenalty = 40;
+  constexpr int kPenalty = 10;
+  constexpr int kBias = 10000;
 
-  const int kEdgePenalty = 40;
-  const int kPenalty = 10;
+  // Put bias not to be negative
+  int score = kBias;
 
   // Field should be like 'U'
   int diff12 = std::max(field.height(2) - field.height(1), 0);
@@ -216,7 +218,7 @@ int Evaluator::Future(const CoreField& field) {
         field, KumipuyoSeq(), 1,
         [&scores](const RefPlan& plan) {
           if (plan.isRensaPlan())
-            scores.push_back(plan.rensaResult().score);
+            scores.push_back(plan.score() + plan.chains() * 1500);
         });
   }
   return std::accumulate(scores.begin(), scores.end(), 0) / 22;

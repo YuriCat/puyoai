@@ -7,7 +7,9 @@
 
 using namespace std;
 
-static const char TEST_BOOK[] =
+namespace {
+
+const char TEST_BOOK[] =
     "[[book]]\n"
     "field = []\n"
     "AAAA = [3, 2]\n"
@@ -22,11 +24,8 @@ static const char TEST_BOOK[] =
     "    \"..A...\",\n"
     "    \"..A...\"\n"
     "]\n"
+    "AA = [3, 0]\n"
     "AAAA = [5, 2]\n"
-    "AAAB = [3, 0]\n"
-    "AAAC = [3, 0]\n"
-    "AABB = [3, 0]\n"
-    "AABC = [3, 0]\n"
     "\n"
     "[[book]]\n"
     "field = [\n"
@@ -40,56 +39,85 @@ static const char TEST_BOOK[] =
     "    \".A....\"\n"
     "]\n"
     "ABAB = [3, 0]\n";
+}  // namespace
 
-TEST(DecisionBookTest, nextDecision1)
+class DecisionBookTest : public testing::Test {
+ public:
+  void SetUp() override
+  {
+    ASSERT_TRUE(m_book.loadFromString(TEST_BOOK));
+  }
+
+  DecisionBook& book() { return m_book; }
+
+ private:
+  DecisionBook m_book;
+};
+
+TEST_F(DecisionBookTest, nextDecisionNotInBook)
 {
-    DecisionBook book;
-    ASSERT_TRUE(book.loadFromString(TEST_BOOK));
-
     CoreField cf;
-    KumipuyoSeq seq("RRRRRRGG");
+    KumipuyoSeq seq("RRBG");
 
-    EXPECT_EQ(Decision(3, 2), book.nextDecision(cf, seq));
+    EXPECT_FALSE(book().nextDecision(cf, seq).isValid());
+}
+
+TEST_F(DecisionBookTest, nextDecisionWithOneTsumo)
+{
+    CoreField cf;
+    KumipuyoSeq seq("RRRRGG");
+
+    EXPECT_EQ(Decision(3, 2), book().nextDecision(cf, seq));
     cf.dropKumipuyo(Decision(3, 2), seq.front());
     seq.dropFront();
 
-    EXPECT_EQ(Decision(5, 2), book.nextDecision(cf, seq));
+    // We have no entry to match with "RRGG", so "RR" is used.
+    EXPECT_EQ(Decision(3, 0), book().nextDecision(cf, seq));
+    cf.dropKumipuyo(Decision(3, 0), seq.front());
+    seq.dropFront();
+}
+
+TEST_F(DecisionBookTest, nextDecision1)
+{
+    CoreField cf;
+    KumipuyoSeq seq("RRRRRRGG");
+
+    EXPECT_EQ(Decision(3, 2), book().nextDecision(cf, seq));
+    cf.dropKumipuyo(Decision(3, 2), seq.front());
+    seq.dropFront();
+
+    // 2 Tsumo's control is prioritized to 1 Tsumo's control.
+    EXPECT_EQ(Decision(5, 2), book().nextDecision(cf, seq));
     cf.dropKumipuyo(Decision(5, 2), seq.front());
     seq.dropFront();
 
-    EXPECT_FALSE(book.nextDecision(cf, seq).isValid());
+    EXPECT_FALSE(book().nextDecision(cf, seq).isValid());
 }
 
-TEST(DecisionBookTest, nextDecision2)
+TEST_F(DecisionBookTest, nextDecision2)
 {
-    DecisionBook book;
-    ASSERT_TRUE(book.loadFromString(TEST_BOOK));
-
     CoreField cf;
     KumipuyoSeq seq("RRBBGG");
 
-    EXPECT_EQ(Decision(3, 3), book.nextDecision(cf, seq));
+    EXPECT_EQ(Decision(3, 3), book().nextDecision(cf, seq));
     cf.dropKumipuyo(Decision(3, 3), seq.front());
     seq.dropFront();
 
-    EXPECT_EQ(Decision(3, 3), book.nextDecision(cf, seq));
+    EXPECT_EQ(Decision(3, 3), book().nextDecision(cf, seq));
     cf.dropKumipuyo(Decision(3, 3), seq.front());
     seq.dropFront();
 }
 
-TEST(DecisionBookTest, nextDecision3)
+TEST_F(DecisionBookTest, nextDecision3)
 {
-    DecisionBook book;
-    ASSERT_TRUE(book.loadFromString(TEST_BOOK));
-
     CoreField cf;
     KumipuyoSeq seq("RBRBBR");
 
-    EXPECT_EQ(Decision(2, 2), book.nextDecision(cf, seq));
+    EXPECT_EQ(Decision(2, 2), book().nextDecision(cf, seq));
     cf.dropKumipuyo(Decision(2, 2), seq.front());
     seq.dropFront();
 
-    EXPECT_EQ(Decision(3, 2), book.nextDecision(cf, seq));
+    EXPECT_EQ(Decision(3, 2), book().nextDecision(cf, seq));
     cf.dropKumipuyo(Decision(3, 2), seq.front());
     seq.dropFront();
 }

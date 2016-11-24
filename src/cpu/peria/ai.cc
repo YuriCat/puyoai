@@ -14,12 +14,16 @@
 #include "base/time.h"
 #include "core/plan/plan.h"
 #include "core/rensa/rensa_detector.h"
+#include "core/pattern/decision_book.h"
 #include "core/core_field.h"
 #include "core/frame_request.h"
 #include "core/player_state.h"
-#include "cpu/peria/control.h"
-#include "cpu/peria/evaluator.h"
-#include "cpu/peria/player_hands.h"
+
+#include "search_without_risk.h"
+#include "control.h"
+#include "evaluator.h"
+#include "player_hands.h"
+#include "pattern.h"
 
 namespace peria {
 
@@ -38,7 +42,28 @@ DropDecision Ai::think(int frame_id,
   Control control;
   control.decision= Decision(3, 2);
   control.message = "No choice";
-  control.score = 0;
+  control.score = -10000;
+
+  // Check if it is in Joski template.
+  DropDecision joseki = checkJoseki(field, seq);
+  if (joseki.isValid()) {
+    return joseki;
+  }
+
+  // Check if the enemy is firing the main rensa (Honsen)
+  if (SearchWithoutRisk::shouldRun(enemy)) {
+    SearchWithoutRisk search(me, seq, enemy.rensaFinishingFrameId() - frame_id);
+    Decision decision = search.run();
+    std::ostringstream oss;
+    if (decision.isValid()) {
+      oss << "Honki mode\n";
+    } else {
+      oss << "Honki muri\n";
+      decision = Decision(3, 2);
+    }
+    oss << "Beam run " << search.countBeam() << " times";
+    return DropDecision(decision, oss.str());
+  }
 
   Evaluator evaluator(me, enemy, enemy_hands_, &control);
 
@@ -102,6 +127,13 @@ void Ai::onGroundedForEnemy(const FrameRequest& frame_request) {
         possible.push_back(rensa);
         return result;
       });
+}
+
+DropDecision Ai::checkJoseki(const CoreField& field, const KumipuyoSeq& seq) const {
+  DecisionBook* joseki = Pattern::getJoseki();
+  DCHECK(joseki);
+  Decision decision = joseki->nextDecision(field, seq);
+  return DropDecision(decision, "By JOSEKI book");
 }
 
 namespace {
